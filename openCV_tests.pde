@@ -23,7 +23,7 @@ void draw() {
   // first you load the image from video feed, this returns void
   opencv.loadImage(video);
 
-  opencv.threshold(80);          // threshold being applied
+  opencv.threshold(80);          // threshold being applied, (0, 255)
   thresh = opencv.getSnapshot();   // load a snapshot of the threshold into the thresh pimage object 
   
   image(thresh, 0, 0 );            // display the "thresh" object at origin position, on the window
