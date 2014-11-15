@@ -27,11 +27,11 @@ void draw() {
   opencv.loadImage(video);
 
   opencv.gray();            // apply an operation
-  opencv.threshold(40);
+  opencv.adaptiveThreshold(591, 1);
   thresh = opencv.getOutput();  // get its output
   
   contours = opencv.findContours();
-  println(contours.size());
+  // println(contours.size());
   image(thresh, 0, 0 );            // display the image on the window
   
   noFill();
@@ -41,12 +41,14 @@ void draw() {
     stroke(0, 255, 0);
     contour.draw();
     
+    /*
     stroke(255, 0, 0);
     beginShape();
     for (PVector point : contour.getPolygonApproximation().getPoints()) {
       vertex(point.x, point.y);
     }
     endShape();
+    /**/
   }
   /**/
 }
