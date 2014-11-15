@@ -5,6 +5,10 @@ import java.awt.*;
 Capture video;
 OpenCV opencv;
 
+// the contour arrays
+ArrayList<Contour> contours;
+ArrayList<Contour> polygons;
+
 // the image object which shall contain the processed image
 PImage thresh;
 
@@ -24,11 +28,29 @@ void draw() {
   opencv.loadImage(video);
 
   opencv.gray();            // apply an operation
+  opencv.threshold(70);
   
-  thresh = opencv.getOutput();  // get its output
+  contours = opencv.findContours();
+  println(contours.size());
+  image(video, 0, 0 );            // display the image on the window
   
-  image(thresh, 0, 0 );            // display the "thresh" object at origin position, on the window
+  noFill();
+  strokeWeight(1);
   
+  for (Contour contour : contours) {
+    stroke(0, 255, 0);
+    contour.draw();
+    
+    stroke(255, 0, 0);
+    beginShape();
+    for (PVector point : contour.getPolygonApproximation().getPoints()) {
+      vertex(point.x, point.y);
+    }
+    endShape();
+  }
+  /**/
+  
+  // thresh = opencv.getOutput();  // get its output
 }
 
 // dunno what this next function does, but its crucial to operation...
