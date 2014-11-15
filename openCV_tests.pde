@@ -17,7 +17,6 @@ void setup() {
   video = new Capture(this, 640/2, 480/2);    // new video object
   opencv = new OpenCV(this, 640/2, 480/2);    // new opencv object
   // opencv.loadCascade(OpenCV.CASCADE_EYE);  // here's where you load the object detection cascade that you're interested in using
-    
 
   video.start();            // begin the capturing
 }
@@ -28,11 +27,12 @@ void draw() {
   opencv.loadImage(video);
 
   opencv.gray();            // apply an operation
-  opencv.threshold(70);
+  opencv.threshold(40);
+  thresh = opencv.getOutput();  // get its output
   
   contours = opencv.findContours();
   println(contours.size());
-  image(video, 0, 0 );            // display the image on the window
+  image(thresh, 0, 0 );            // display the image on the window
   
   noFill();
   strokeWeight(1);
@@ -49,8 +49,6 @@ void draw() {
     endShape();
   }
   /**/
-  
-  // thresh = opencv.getOutput();  // get its output
 }
 
 // dunno what this next function does, but its crucial to operation...
