@@ -26,10 +26,15 @@ void draw() {
   // first you load the image from video feed, this returns void
   opencv.loadImage(video);
 
-  opencv.gray();            // apply an operation
-  opencv.adaptiveThreshold(591, 1);
+  // adaptive thresholding has to be done only on a gray image, obviously
+  opencv.gray();            
+  // next we do the adaptive thresholding...
+  // the first argument has to be an ODD number, 
+  // the second argument is the constant that is subtracted from the thresholded values
+  opencv.adaptiveThreshold(589, -50);    
   thresh = opencv.getOutput();  // get its output
   
+  // now that we've thresholded it nicely, we go about finding contours.
   contours = opencv.findContours();
   // println(contours.size());
   image(thresh, 0, 0 );            // display the image on the window
