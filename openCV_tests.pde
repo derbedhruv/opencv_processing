@@ -1,5 +1,5 @@
 // taken and modified from http://www.magicandlove.com/blog/2013/04/04/opencv-2-4-4-and-processing/ 
-
+// import all the necessary libraries.. these are native from opencv ver 2.4.6
 import processing.video.*;
  
 import org.opencv.core.Core;
@@ -12,6 +12,7 @@ import java.awt.image.BufferedImage;
 import java.awt.image.WritableRaster;
 import java.awt.image.Raster;
  
+// the basic objects which are needed to get this working...
 Capture cap;
 int pixCnt;
 BufferedImage bm;
@@ -19,48 +20,65 @@ PImage img;
  
 void setup() {
   size(640, 480);
+  
+  // the system.loadlibrary seems to be indispensible to getting things working...
   System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
   println(Core.VERSION);
  
+  // define a new capture object and start it...
   cap = new Capture(this, width, height);
   cap.start();
+  
+  // next we initialize some ofthe variables which will be indispensible
   bm = new BufferedImage(width, height, BufferedImage.TYPE_4BYTE_ABGR);
   img = createImage(width, height, ARGB);
   pixCnt = width*height*4;
 }
  
 void convert(PImage _i) {
+  /* the magical function which does it all */
+  
+  // first we extract the elements from the PImage object and throw them into the Mat object 'm1'. This is a 'colourspace' matrix.
   bm.setRGB(0, 0, _i.width, _i.height, _i.pixels, 0, _i.width);
   Raster rr = bm.getRaster();
   byte [] b1 = new byte[pixCnt];
   rr.getDataElements(0, 0, _i.width, _i.height, b1);
   Mat m1 = new Mat(_i.height, _i.width, CvType.CV_8UC4);
   m1.put(0, 0, b1);
- 
+  
+  // next we define the 'greyscale space' matrix 'm2' and put the greyscaled version of the PImage into it
   Mat m2 = new Mat(_i.height, _i.width, CvType.CV_8UC1);
   Imgproc.cvtColor(m1, m2, Imgproc.COLOR_BGRA2GRAY);   
  
   
+  /* now the magic.. perform whichever Imgproc method you want to on these matrices
+     Just be sure to choose m1 or m2 depending on whether the method is performed on 
+     colourspace or greyscale spaces. Source and destination can be the same matrix. */
   // Imgproc.GaussianBlur(m2, m2, new Size(7, 7), 1.5, 1.5);
   // Imgproc.Canny(m2, m2, 0, 30, 3, false);
   Imgproc.adaptiveThreshold(m2, m2, (double)255.0, Imgproc.ADAPTIVE_THRESH_GAUSSIAN_C, Imgproc.THRESH_BINARY, 501, (double)0.0);    // Imgproc is the object, just apply method
-  Imgproc.cvtColor(m2, m1, Imgproc.COLOR_GRAY2BGRA);
   /**/
   
+  // and now we have to convert back to colourspace to display in the procesing window
+  // Hence m2 is the final matrix which will be showed..
+  Imgproc.cvtColor(m2, m1, Imgproc.COLOR_GRAY2BGRA);
   
+  // Re-convert m2 to a PImage object 'img'
   m1.get(0, 0, b1);
   WritableRaster wr = bm.getRaster();
   wr.setDataElements(0, 0, _i.width, _i.height, b1);
   bm.getRGB(0, 0, _i.width, _i.height, img.pixels, 0, _i.width);
   img.updatePixels();
+  
+  // release the flush. It's all over.
   bm.flush();
   m2.release();
   m1.release();
 }
  
 void draw() {
-  if (cap.available()) {
-    background(0);
+  if (cap.available()) {    // essential line otherwise video will be jerky
+    /* simple 3-step process. Read the capture object, convert the capture object and display the captured image. */
     cap.read();
     convert(cap);
     image(img, 0, 0);
