@@ -19,6 +19,9 @@ BufferedImage bm;
 PImage img;
 Mat circles;
 
+// parameters to be passed to the houghCircles method...
+int dp = 1, minDist = 20, param1 = 10, param2 = 25, minRadius = 100, maxRadius = 200;
+
 // variables for the detected circles...
 int x, y, radius;
  
@@ -63,7 +66,7 @@ void convert(PImage _i) {
   Imgproc.adaptiveThreshold(m2, m2, (double)255.0, Imgproc.ADAPTIVE_THRESH_GAUSSIAN_C, Imgproc.THRESH_BINARY, 301, (double)1.0);    // Imgproc is the object, just apply method
   
   circles = new Mat();    // copied from http://stackoverflow.com/questions/9445102/detecting-hough-circles-android
-  Imgproc.HoughCircles(m2, circles, Imgproc.CV_HOUGH_GRADIENT, 1, 20, 10, 20, 100, 200);
+  Imgproc.HoughCircles(m2, circles, Imgproc.CV_HOUGH_GRADIENT, dp, minDist, param1, param2, minRadius, maxRadius);
     
   /**********************************************************/
   
@@ -89,7 +92,7 @@ void draw() {
     /* simple 3-step process. Read the capture object, convert the capture object and display the captured image. */
     cap.read();
     convert(cap);
-    image(img, 0, 0);
+    image(cap, 0, 0);
     
     // print out the circles
     for (int k = 0; k < circles.cols(); k++) {
@@ -99,6 +102,7 @@ void draw() {
             println("no circle found");
             break;
         } else {
+            // circle detected. extract parameters. taken from http://stackoverflow.com/questions/23860014/houghcircles-finds-wrong-circles-opencv
             x = (int)Math.round(vCircle[0]); 
             y = (int)Math.round(vCircle[1]);
             radius = (int)Math.round(vCircle[2]);
@@ -111,7 +115,7 @@ void draw() {
           
             // draw the found circle
             stroke(255, 0, 0);
-            fill(0,0,0,0);
+            fill(0,0,0,0);    // transparent fill
             ellipse(x, y, radius, radius);
          }
     }
