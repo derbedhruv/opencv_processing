@@ -17,6 +17,7 @@ Capture cap;
 int pixCnt;
 BufferedImage bm;
 PImage img;
+Mat circles;
 
 // variables for the detected circles...
 int x, y, radius;
@@ -61,33 +62,9 @@ void convert(PImage _i) {
   // Imgproc.Canny(m2, m2, 0, 30, 3, false);
   Imgproc.adaptiveThreshold(m2, m2, (double)255.0, Imgproc.ADAPTIVE_THRESH_GAUSSIAN_C, Imgproc.THRESH_BINARY, 301, (double)1.0);    // Imgproc is the object, just apply method
   
-  Mat circles = new Mat();    // copied from http://stackoverflow.com/questions/9445102/detecting-hough-circles-android
+  circles = new Mat();    // copied from http://stackoverflow.com/questions/9445102/detecting-hough-circles-android
   Imgproc.HoughCircles(m2, circles, Imgproc.CV_HOUGH_GRADIENT, 1, 20, 10, 20, 100, 200);
     
-  // then we print out the circles...
-  for (int k = 0; k < circles.cols(); k++) {
-      double vCircle[] = circles.get(0,k);
-    
-      if (vCircle == null) {
-          println("no circle found");
-          break;
-      } else {
-          x = (int)Math.round(vCircle[0]); 
-          y = (int)Math.round(vCircle[1]);
-          radius = (int)Math.round(vCircle[2]);
-          
-          print(x);
-          print('\t');
-          print(y);
-          print('\t');
-          println(radius);
-        
-          // draw the found circle
-          stroke(255, 0, 0);
-          fill(0,0,0,0);
-          ellipse(x, y, radius, radius);
-       }
-  }
   /**********************************************************/
   
   // and now we have to convert back to colourspace to display in the procesing window
@@ -112,6 +89,31 @@ void draw() {
     /* simple 3-step process. Read the capture object, convert the capture object and display the captured image. */
     cap.read();
     convert(cap);
-    // image(img, 0, 0);
+    image(img, 0, 0);
+    
+    // print out the circles
+    for (int k = 0; k < circles.cols(); k++) {
+        double vCircle[] = circles.get(0,k);
+      
+        if (vCircle == null) {
+            println("no circle found");
+            break;
+        } else {
+            x = (int)Math.round(vCircle[0]); 
+            y = (int)Math.round(vCircle[1]);
+            radius = (int)Math.round(vCircle[2]);
+            
+            print(x);
+            print('\t');
+            print(y);
+            print('\t');
+            println(radius);
+          
+            // draw the found circle
+            stroke(255, 0, 0);
+            fill(0,0,0,0);
+            ellipse(x, y, radius, radius);
+         }
+    }
   }
 }
