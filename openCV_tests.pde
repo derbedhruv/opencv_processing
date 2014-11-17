@@ -50,14 +50,14 @@ void convert(PImage _i) {
   Mat m2 = new Mat(_i.height, _i.width, CvType.CV_8UC1);
   Imgproc.cvtColor(m1, m2, Imgproc.COLOR_BGRA2GRAY);   
  
-  
+  /***********************************************************/
   /* now the magic.. perform whichever Imgproc method you want to on these matrices
      Just be sure to choose m1 or m2 depending on whether the method is performed on 
      colourspace or greyscale spaces. Source and destination can be the same matrix. */
   // Imgproc.GaussianBlur(m2, m2, new Size(7, 7), 1.5, 1.5);
   // Imgproc.Canny(m2, m2, 0, 30, 3, false);
-  Imgproc.adaptiveThreshold(m2, m2, (double)255.0, Imgproc.ADAPTIVE_THRESH_GAUSSIAN_C, Imgproc.THRESH_BINARY, 501, (double)0.0);    // Imgproc is the object, just apply method
-  /**/
+  Imgproc.adaptiveThreshold(m2, m2, (double)255.0, Imgproc.ADAPTIVE_THRESH_GAUSSIAN_C, Imgproc.THRESH_BINARY, 301, (double)1.0);    // Imgproc is the object, just apply method
+  /**********************************************************/
   
   // and now we have to convert back to colourspace to display in the procesing window
   // Hence m2 is the final matrix which will be showed..
